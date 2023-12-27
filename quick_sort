@@ -1,0 +1,69 @@
+#include<iostream>
+#include<chrono>
+#include<sys/resource.h>
+using namespace std;
+void quick_sort(int input[],int low,int high);
+int partion(int input[],int low,int high)
+{
+   int pivot = input[low];
+    int i = low + 1;
+    int j = high;
+
+    while (i <= j)
+    {
+        while (input[i] <= pivot)
+        {
+            i++;
+        }
+        while (input[j] > pivot)
+        {
+            j--;
+        }
+        if (i < j)
+        {
+            swap(input[i], input[j]);
+        }
+    }
+
+    swap(input[low], input[j]);
+    return j;
+}
+int main()
+{
+    int size,input[50],i;
+    struct rusage r_usage;
+    
+    cout<<"enter the size of array \t";
+    cin>>size;
+    cout<<"\n enter the array elemnts";
+    for(i=0;i<size;i++)
+    {
+        cin>>input[i];
+    }
+    
+    auto start=chrono::high_resolution_clock::now();
+    quick_sort(input,0,size-1);
+    auto end=chrono::high_resolution_clock::now();
+    cout<<"/n sorted array is:";
+    for(i=0;i<size;i++)
+    {
+        cout<<input[i];
+    }
+    chrono::duration<double>duration=end-start;
+    cout<<"time of quick  sort is"<<duration.count()<<"microseconds"<<endl;
+    getrusage(RUSAGE_SELF, &r_usage); 
+    cout<<"memeory usage is:"<< r_usage.ru_maxrss<<"killobytes"<<endl;
+    return 0;
+    
+}
+
+void quick_sort(int input[],int low,int high)
+{
+    if(low<high)
+    {
+        int pivot=partion(input,low,high);
+        quick_sort(input,low,pivot-1);
+        quick_sort(input,pivot+1,high);
+        
+    }
+}
