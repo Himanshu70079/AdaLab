@@ -1,0 +1,52 @@
+#include <iostream>
+#include <chrono>
+#include <ctime>
+#include <ratio>
+
+using namespace std;
+
+const int SIZE = 4; // Rename 'size' to 'SIZE'
+
+const int INF = 999;
+
+void floydWarshall(int mat[SIZE][SIZE]) {
+    for (int k = 0; k < SIZE; k++) {
+        auto start = chrono::high_resolution_clock::now();
+
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                if (i != k && j != k) {
+                    if (i != j) {
+                        mat[i][j] = min(mat[i][j], (mat[i][k] + mat[k][j]));
+                    }
+                }
+            }
+        }
+
+        auto end = chrono::high_resolution_clock::now();
+        chrono::duration<double> duration = end - start;
+
+        cout << "For matrix when k = " << k << endl;
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                cout << mat[i][j] << '\t';
+            }
+            cout << endl;
+        }
+        cout << "Time taken: " << duration.count() << " seconds" << endl;
+        cout << "---------------------" << endl;
+    }
+}
+
+int main() {
+    int mat1[SIZE][SIZE] = {
+        {0, 3, INF, 5},
+        {2, 0, INF, 4},
+        {INF, 1, 0, INF},
+        {INF, INF, 2, 0}
+    };
+
+    floydWarshall(mat1);
+    return 0;
+}
+ 
