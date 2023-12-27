@@ -1,0 +1,88 @@
+#include<iostream>
+#include<chrono>
+#include<sys/resource.h>
+using namespace std;
+void merge_sort(int input[],int low,int high);
+void merge(int arr[], int l, int r, int m);
+
+int main()
+{
+    int size,input[50],i;
+    struct rusage r_usage;
+    
+    cout<<"enter the size of array \t";
+    cin>>size;
+    cout<<"\n enter the array elemnts";
+    for(i=0;i<size;i++)
+    {
+        cin>>input[i];
+    }
+    
+    auto start=chrono::high_resolution_clock::now();
+    merge_sort(input,0,size-1);
+    auto end=chrono::high_resolution_clock::now();
+    cout<<"/n sorted array is:";
+    for(i=0;i<size;i++)
+    {
+        cout<<input[i];
+    }
+    chrono::duration<double>duration=end-start;
+    cout<<"time of quick  sort is"<<duration.count()<<"microseconds"<<endl;
+    getrusage(RUSAGE_SELF, &r_usage); 
+    cout<<"memeory usage is:"<< r_usage.ru_maxrss<<"killobytes"<<endl;
+    return 0;
+    
+}
+void merge_sort(int x[], int l, int r)
+{
+    if (l < r)
+    {
+        int mid = l + (r - l) / 2;
+        merge_sort(x, l, mid);
+        merge_sort(x, mid + 1, r);
+        merge(x, l, r, mid);
+    }
+}
+
+
+void merge(int arr[], int l, int r, int m)
+  {
+    int k = 0, i = l, j = m + 1;
+    int B[r - l + 1] = {};
+
+    while (i <= m && j <= r)
+    {
+        if (arr[i] <= arr[j])
+        {
+            B[k] = arr[i];
+            k++;
+            i++;
+        }
+
+        else
+        {
+            B[k] = arr[j];
+            k++;
+            j++;
+        }
+    }
+
+    while (j <= r)
+    {
+        B[k] = arr[j];
+        k++;
+        j++;
+    }
+
+    while (i <= m)
+    {
+        B[k] = arr[i];
+        k++;
+        i++;
+    }
+
+    for (int x = 0; x < k; x++)
+    {
+        arr[l + x] = B[x];
+    }
+}
