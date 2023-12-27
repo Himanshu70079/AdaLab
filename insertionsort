@@ -1,0 +1,51 @@
+#include<iostream>
+#include<chrono>
+#include<sys/resource.h>
+using namespace std;
+void selection_sort(int input[],int n);
+int main()
+{
+    int size,input[50],i;
+    struct rusage r_usage;
+    cout<<"enter the size of array";
+    cin>>size;
+    cout<<"/n enter the array elemnts";
+    for(i=0;i<size;i++)
+    {
+        cin>>input[i];
+    }
+    auto start=chrono::high_resolution_clock::now();
+    selection_sort(input,size);
+    auto end=chrono::high_resolution_clock::now();
+    cout<<"/n sorted array is:";
+    for(i=0;i<size;i++)
+    {
+        cout<<input[i];
+    }
+    chrono::duration<double>duration=end-start;
+    cout<<"time of selection sort is"<<duration.count()<<"microseconds"<<endl;
+    getrusage(RUSAGE_SELF, &r_usage); 
+    cout<<"memeory usage is:"<< r_usage.ru_maxrss<<"killobytes"<<endl;
+    return 0;
+    
+}
+
+void selection_sort(int input[],int n)
+{
+    int i,j,min,temp;
+    for(i=0;i<n-1;i++)
+    {
+         min=i;
+         for(j=i+1;j<n;j++)
+         {
+             if(input[j]<input[min])
+             {
+                 min=j;
+             }
+             
+         }
+         temp=input[min];
+         input[min]=input[i];
+         input[i]=temp;
+    }
+}
