@@ -1,0 +1,58 @@
+#include <iostream>
+#include <vector>
+#include <chrono>
+#include <sys/resource.h> // Required for getrusage
+
+using namespace std;
+
+void floydWarshall(vector<vector<int>>& mat) {
+    int size = mat.size();
+
+    for (int k = 0; k < size; k++) {
+        struct rusage usage_start, usage_end;
+        getrusage(RUSAGE_SELF, &usage_start);
+
+        auto start = chrono::high_resolution_clock::now();
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                if (i != k && j != k) {
+                    if (mat[i][j] == 0) {
+                        mat[i][j] = mat[i][k] && mat[k][j];
+                    }
+                }
+            }
+        }
+
+        auto end = chrono::high_resolution_clock::now();
+        chrono::duration<double> duration = end - start;
+
+        getrusage(RUSAGE_SELF, &usage_end);
+
+        long memory_usage = usage_end.ru_maxrss - usage_start.ru_maxrss;
+
+        cout << "For matrix when k = " << k << endl;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                cout << mat[i][j] << '\t';
+            }
+            cout << endl;
+        }
+        cout << "Time taken: " << duration.count() << " seconds" << endl;
+        cout << "Memory used: " << memory_usage << " KB" << endl;
+        cout << "---------------------" << endl;
+    }
+}
+
+int main() {
+    vector<vector<int>> mat1 = {
+        {0, 1, 0, 0},
+        {0, 0, 0, 1},
+        {0, 0, 0, 0},
+        {1, 0, 1, 0}
+    };
+
+    floydWarshall(mat1);
+
+    return 0;
+}
