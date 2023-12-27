@@ -1,0 +1,53 @@
+#include <iostream>
+#include <queue>
+#include <chrono>
+#include <sys/resource.h>
+using namespace std;
+
+void BFS(int start, int graph[][7], int visited[]) {
+    queue<int> explore;
+    visited[start] = 1;
+    explore.push(start);
+
+    while (!explore.empty()) {
+        int node = explore.front();
+        explore.pop();
+        cout << node << '\t';
+
+        for (int i = 0; i < 7; i++) {
+            if (graph[node][i] == 1 && visited[i] == 0) {
+                visited[i] = 1;
+                explore.push(i);
+            }
+        }
+    }
+}
+
+int main() {
+    int visited[7] = {0, 0, 0, 0, 0, 0, 0};
+    int graph[7][7] = {
+        {0, 1, 1, 1, 0, 0, 0},
+        {1, 0, 0, 1, 0, 0, 0},
+        {1, 0, 0, 1, 1, 0, 0},
+        {1, 1, 1, 0, 1, 0, 0},
+        {0, 0, 1, 1, 0, 1, 1},
+        {0, 0, 0, 0, 1, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0}
+    };
+
+    int start = 1;
+    cout << "BFS traversal starting from node " << start << " is: ";
+
+    struct rusage r_usage;
+    getrusage(RUSAGE_SELF, &r_usage);
+    auto start_time = chrono::high_resolution_clock::now();
+    BFS(start, graph, visited);
+    auto end_time = chrono::high_resolution_clock::now();
+
+    chrono::duration<double> duration = end_time - start_time;
+    cout << "\nTime taken for BFS: " << duration.count() << " seconds" << endl;
+
+    cout << "Memory usage: " << r_usage.ru_maxrss << " kilobytes" << endl;
+
+    return 0;
+}
