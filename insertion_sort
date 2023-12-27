@@ -1,0 +1,50 @@
+#include<iostream>
+#include<chrono>
+#include<sys/resource.h>
+using namespace std;
+void insertion_sort(int input[],int n);
+int main()
+{
+    int size,input[50],i;
+    struct rusage r_usage;
+    
+    cout<<"enter the size of array \t";
+    cin>>size;
+    cout<<"\n enter the array elemnts";
+    for(i=0;i<size;i++)
+    {
+        cin>>input[i];
+    }
+    
+    auto start=chrono::high_resolution_clock::now();
+    insertion_sort(input,size);
+    auto end=chrono::high_resolution_clock::now();
+    cout<<"/n sorted array is:";
+    for(i=0;i<size;i++)
+    {
+        cout<<input[i];
+    }
+    chrono::duration<double>duration=end-start;
+    cout<<"time of insertion  sort is"<<duration.count()<<"microseconds"<<endl;
+    getrusage(RUSAGE_SELF, &r_usage); 
+    cout<<"memeory usage is:"<< r_usage.ru_maxrss<<"killobytes"<<endl;
+    return 0;
+    
+}
+
+void insertion_sort(int input[],int n)
+{
+    int i,j,key;
+    for(i=0;i<n;i++)
+    {
+      key=input[i];
+      j=i-1;
+       while(j>=0&& input[j]>key)
+         {
+            input[j+1]=input[j];
+            j--;
+             
+         }
+        input[j+1]=key;
+    }
+}
